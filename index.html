@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanoq Sarguzashti</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    .card { background: #fff; border-radius: 1.5rem; box-shadow: 0 10px 30px -10px rgba(99,102,241,.25); }
+    .fade-in { animation: fi .5s ease both; }
+    @keyframes fi { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .shake { animation: shake .4s; }
+    @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    .star { position: absolute; pointer-events: none; animation: rise .9s ease-out forwards; font-size: 1.5rem; }
+    @keyframes rise { 0% { opacity: 1; transform: translateY(0) scale(.5); } 100% { opacity: 0; transform: translateY(-100px) scale(1.4); } }
+    @keyframes fall { to { transform: translateY(105vh) rotate(720deg); } }
+    .bar { transition: width .8s cubic-bezier(.4,0,.2,1); }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 bg-gradient-to-br from-indigo-100 via-pink-50 to-sky-100">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <a href="#home" class="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent">🧭 Sanoq Sarguzashti</a>
+      <nav class="flex flex-wrap gap-2 text-sm font-semibold">
+        <a href="#nazariya" class="px-3 py-1.5 rounded-full hover:bg-indigo-100">Usullar</a>
+        <a href="#kalkulyator" class="px-3 py-1.5 rounded-full hover:bg-indigo-100">O'tkazgich</a>
+        <a href="#xato" class="px-3 py-1.5 rounded-full hover:bg-indigo-100">Xatoni top</a>
+        <a href="#minora" class="px-3 py-1.5 rounded-full hover:bg-indigo-100">Darajalar minorasi</a>
+      </nav>
+      <div class="flex items-center gap-2 text-sm font-bold bg-white rounded-full px-3 py-1 shadow">
+        <span>⭐ Daraja <span id="levelBadge">1</span></span>
+        <span class="text-indigo-600" id="xpBadge">0 XP</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pb-16">
+
+    <!-- HERO -->
+    <section id="home" class="pt-10 pb-8 text-center fade-in">
+      <div class="text-6xl mb-3">🧭</div>
+      <h1 class="text-3xl md:text-5xl font-black leading-tight">
+        Sanoq sistemalari <span class="bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent">sarguzashti</span>
+      </h1>
+      <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+        Sonlarni bir sistemadan ikkinchisiga o'tkazishning ikki usulini o'rganing: <b>qoldiq bilan bo'lish</b> va <b>darajalar yig'indisi</b>.
+        "Nega bunday chiqdi?" degan savolga javob toping!
+      </p>
+    </section>
+
+    <!-- NAZARIYA -->
+    <section id="nazariya" class="py-8 scroll-mt-24">
+      <h2 class="text-2xl md:text-3xl font-black mb-2">📚 Nazariya va o'rganish</h2>
+      <p class="text-slate-600 mb-6">Ikki sanoq sistemasini tanlang. Pastda shu yo'nalishga oid qo'llanma va tezkor sinov chiqadi.</p>
+
+      <div class="card p-6">
+        <div class="grid md:grid-cols-3 gap-4 items-end">
+          <div>
+            <label for="gFrom" class="block text-sm font-bold mb-1">Qaysi sistemadan</label>
+            <select id="gFrom" class="w-full px-3 py-3 rounded-xl border-2 border-indigo-200 bg-white font-semibold">
+              <option value="2">Ikkilik (2)</option><option value="4">To'rtlik (4)</option><option value="8">Sakkizlik (8)</option>
+              <option value="10" selected>O'nlik (10)</option><option value="16">O'n oltilik (16)</option>
+            </select>
+          </div>
+          <div>
+            <label for="gTo" class="block text-sm font-bold mb-1">Qaysi sistemaga</label>
+            <select id="gTo" class="w-full px-3 py-3 rounded-xl border-2 border-indigo-200 bg-white font-semibold">
+              <option value="2" selected>Ikkilik (2)</option><option value="4">To'rtlik (4)</option><option value="8">Sakkizlik (8)</option>
+              <option value="10">O'nlik (10)</option><option value="16">O'n oltilik (16)</option>
+            </select>
+          </div>
+          <div class="text-center">
+            <p id="gRoute" class="text-3xl font-black text-indigo-700">10 → 2</p>
+            <p id="gRouteName" class="text-sm text-slate-500">O'nlik → Ikkilik</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="guide" class="mt-6 space-y-6"></div>
+
+      <!-- TO'LIQ QOIDALAR -->
+      <div id="qoidalar" class="mt-10 space-y-6">
+        <h3 class="text-2xl md:text-3xl font-black">📖 Sanoq sistemalari orasida o'tish: to'liq qoidalar</h3>
+
+        <div class="card p-6">
+          <h4 class="text-xl font-bold mb-2">1. Asosiy tushuncha</h4>
+          <p class="text-slate-600 mb-4">Sanoq sistemasining <b>asosi</b> ishlatiladigan raqamlar sonini bildiradi. Har bir <b>xona</b> o'z darajasiga ega: o'ngdan chapga qarab b⁰, b¹, b²… qiymatlar.</p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-center text-sm md:text-base">
+              <thead><tr class="text-indigo-700 border-b-2 border-indigo-100"><th class="p-2">Sistema</th><th class="p-2">Asos</th><th class="p-2">Raqamlar</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2">Ikkilik</td><td class="p-2 font-mono">2</td><td class="p-2 font-mono">0, 1</td></tr>
+                <tr class="bg-slate-50"><td class="p-2">To'rtlik</td><td class="p-2 font-mono">4</td><td class="p-2 font-mono">0, 1, 2, 3</td></tr>
+                <tr><td class="p-2">Sakkizlik</td><td class="p-2 font-mono">8</td><td class="p-2 font-mono">0–7</td></tr>
+                <tr class="bg-slate-50"><td class="p-2">O'nlik</td><td class="p-2 font-mono">10</td><td class="p-2 font-mono">0–9</td></tr>
+                <tr><td class="p-2">O'n oltilik</td><td class="p-2 font-mono">16</td><td class="p-2 font-mono">0–9, A=10, B=11, C=12, D=13, E=14, F=15</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-4 text-slate-700"><b>Asosiy qoida:</b> har bir raqam asosdan kichik bo'lishi kerak. Ikkilikda 2 yoki 7 yozib bo'lmaydi.</p>
+          <p class="mt-2 text-slate-700">Misol: 1101₂ = 1·2³ + 1·2² + 0·2¹ + 1·2⁰ = 8 + 4 + 0 + 1 = <b>13</b>.</p>
+        </div>
+
+        <div class="card p-6">
+          <h4 class="text-xl font-bold mb-2">2. O'nlikdan boshqa sistemaga o'tish</h4>
+
+          <div class="rounded-2xl bg-indigo-50 p-5 mb-4">
+            <p class="font-bold text-indigo-700 mb-2">1-usul: Qoldiq bilan bo'lish</p>
+            <p class="text-slate-700 mb-3">Sonni maqsad asosga ketma-ket bo'lamiz, har bo'lishdan qoldiqni yozib olamiz. Bo'linma 0 bo'lganda qoldiqlarni <b>pastdan yuqoriga</b> o'qiymiz.</p>
+            <p class="font-mono mb-1">13 ÷ 2 = 6, qoldiq 1</p>
+            <p class="font-mono mb-1">6 ÷ 2 = 3, qoldiq 0</p>
+            <p class="font-mono mb-1">3 ÷ 2 = 1, qoldiq 1</p>
+            <p class="font-mono mb-3">1 ÷ 2 = 0, qoldiq 1</p>
+            <p class="text-slate-700"><b>Natija: 1101₂</b></p>
+            <p class="mt-2 text-sm text-slate-600"><b>Nega shunday?</b> Har bo'lishda sonning oxirgi xonasi qoldiq bo'lib ajraladi. Birinchi qoldiq eng o'ng xonaga, oxirgisi eng chap xonaga tegishli.</p>
+          </div>
+
+          <div class="rounded-2xl bg-pink-50 p-5">
+            <p class="font-bold text-pink-600 mb-2">2-usul: Darajalar yig'indisi</p>
+            <p class="text-slate-700 mb-3">Asosning darajalaridan kattasidan boshlab, sondan nechta shu darajani olish mumkinligini sanaymiz.</p>
+            <p class="font-mono mb-1">2³ = 8: 13 dan 1 ta olinadi, qoldiq 5</p>
+            <p class="font-mono mb-1">2² = 4: 5 dan 1 ta olinadi, qoldiq 1</p>
+            <p class="font-mono mb-1">2¹ = 2: 1 dan 0 ta olinadi, qoldiq 1</p>
+            <p class="font-mono mb-3">2⁰ = 1: 1 dan 1 ta olinadi, qoldiq 0</p>
+            <p class="text-slate-700"><b>Natija: 1101₂</b> (8 + 4 + 1 = 13)</p>
+            <p class="mt-2 text-sm text-slate-600"><b>Nega shunday?</b> Har bir daraja faqat bir marta ishlatiladi, shuning uchun yig'indi yagona bo'ladi.</p>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h4 class="text-xl font-bold mb-2">3. Boshqa sistemadan o'nlikka o'tish</h4>
+          <p class="text-slate-700 mb-3">Har bir raqamni o'z xonasi darajasiga ko'paytirib, natijalarni qo'shamiz.</p>
+          <div class="space-y-2 font-mono">
+            <p>1101₂ = 1·2³ + 1·2² + 0·2¹ + 1·2⁰ = 8 + 4 + 0 + 1 = <b>13</b></p>
+            <p>135₈ = 1·8² + 3·8¹ + 5·8⁰ = 64 + 24 + 5 = <b>93</b></p>
+            <p>2F₁₆ = 2·16¹ + F·16⁰ = 32 + 15 = <b>47</b> (F = 15)</p>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h4 class="text-xl font-bold mb-2">4. Ikki noldan farqli sistema orasida o'tish</h4>
+          <p class="text-slate-700 mb-3">Bevosita o'tish qiyin bo'lsa, o'nlik sistema <b>ko'prik</b> vazifasini bajaradi:</p>
+          <ol class="list-decimal list-inside space-y-1 text-slate-700 mb-3">
+            <li>Manba sistemadan o'nlikka o'tkazamiz.</li>
+            <li>O'nlikdan maqsad sistemaga o'tkazamiz.</li>
+          </ol>
+          <p class="font-mono text-slate-700">Misol: 2F₁₆ → 47 → 101111₂</p>
+        </div>
+
+        <div class="card p-6">
+          <h4 class="text-xl font-bold mb-2">5. Tezkor yo'l: ikkilik bilan bog'liq sistemalar</h4>
+          <p class="text-slate-700 mb-3">4, 8 va 16 ning asoslari 2 ning darajalari (2², 2³, 2⁴). Shu sababli ular ikkilik orqali juda oson o'tadi.</p>
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div class="rounded-2xl bg-indigo-50 p-4">
+              <p class="font-bold text-indigo-700 mb-2">Ikkilikdan katta sistemaga</p>
+              <p class="text-sm text-slate-600 mb-2">Bitlarni o'ngdan guruhlaymiz: 4 lik uchun 2 tadan, 8 lik uchun 3 tadan, 16 lik uchun 4 tadan.</p>
+              <p class="font-mono text-sm">101111₂ → 101 | 111 → <b>57₈</b> (5·8 + 7 = 47)</p>
+              <p class="font-mono text-sm">101111₂ → 0010 | 1111 → <b>2F₁₆</b></p>
+              <p class="font-mono text-sm">101111₂ → 10 | 11 | 11 → <b>233₄</b></p>
+            </div>
+            <div class="rounded-2xl bg-pink-50 p-4">
+              <p class="font-bold text-pink-600 mb-2">Katta sistemadan ikkilikka</p>
+              <p class="text-sm text-slate-600 mb-2">Har bir raqamni 2, 3 yoki 4 xonali ikkilik yozuviga aylantiramiz.</p>
+              <p class="font-mono text-sm">57₈ → 5 = 101, 7 = 111 → <b>101111₂</b></p>
+              <p class="font-mono text-sm">2F₁₆ → 0010 1111 → <b>101111₂</b> (boshidagi nolni olib tashlaymiz)</p>
+            </div>
+          </div>
+          <p class="text-sm text-slate-600">Eslatma: 8 lik va 16 lik o'rtasida ham shu usul bilan, ikkilik orqali o'tiladi.</p>
+        </div>
+
+        <div class="card p-6">
+          <h4 class="text-xl font-bold mb-2">6. Tekshirish usuli</h4>
+          <p class="text-slate-700">Har qanday natijani o'nlikka qaytarib tekshiring. Agar natija dastlabki sonni bersa, o'tkazish to'g'ri bajarilgan.</p>
+          <p class="font-mono mt-2">1101₂ = 13 ✓</p>
+        </div>
+
+        <div class="card p-6">
+          <h4 class="text-xl font-bold mb-2">7. Ko'p uchraydigan xatolar</h4>
+          <ul class="list-disc list-inside space-y-2 text-slate-700">
+            <li><b>Qoldiqlarni yuqoridan pastga o'qish.</b> Qoldiqlar teskari tartibda chiqadi, ularni pastdan yuqoriga o'qing.</li>
+            <li><b>Qoldiqda asosdan katta raqam yozish.</b> Ikkilikda qoldiq faqat 0 yoki 1 bo'lishi mumkin.</li>
+            <li><b>Xona darajasini noto'g'ri hisoblash.</b> Eng o'ngdagi xona doim b⁰ = 1, chapga har safar daraja bittaga oshadi.</li>
+            <li><b>Guruhlashni chapdan boshlash.</b> Guruhlar o'ng tomondan boshlanadi, kerak bo'lsa chapga nol qo'shiladi.</li>
+            <li><b>A–F harflarini noto'g'ri qiymatlash.</b> 16 likda A=10, B=11, C=12, D=13, E=14, F=15.</li>
+          </ul>
+        </div>
+
+        <div class="card p-6">
+          <h4 class="text-xl font-bold mb-3">8. Qisqa xulosa</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm md:text-base">
+              <thead><tr class="text-indigo-700 border-b-2 border-indigo-100"><th class="p-2">Yo'nalish</th><th class="p-2">Usul</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2">O'nlik → boshqa</td><td class="p-2">Qoldiq bilan bo'lish yoki darajalar yig'indisi</td></tr>
+                <tr class="bg-slate-50"><td class="p-2">Boshqa → o'nlik</td><td class="p-2">Har bir raqamni darajasiga ko'paytirib qo'shish</td></tr>
+                <tr><td class="p-2">Boshqa → boshqa</td><td class="p-2">Avval o'nlikka, so'ng maqsad sistemaga</td></tr>
+                <tr class="bg-slate-50"><td class="p-2">2 ↔ 4, 8, 16</td><td class="p-2">Bitlarni guruhlash (tezkor yo'l)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KALKULYATOR -->
+    <section id="kalkulyator" class="py-8 scroll-mt-24">
+      <h2 class="text-2xl md:text-3xl font-black mb-2">🧠 Qadam-baqadam o'tkazgich</h2>
+      <p class="text-slate-600 mb-6">Sonni va sistemalarni tanlang. Ikkala usul bo'yicha yechilish jarayoni ko'rsatiladi.</p>
+
+      <div class="card p-6 md:p-8">
+        <div class="grid md:grid-cols-3 gap-4 items-end">
+          <div>
+            <label for="inp" class="block font-bold mb-1">Son</label>
+            <input id="inp" type="text" value="13" maxlength="12" autocomplete="off"
+              class="w-full text-2xl font-mono font-bold px-4 py-3 rounded-2xl border-2 border-indigo-200 focus:border-indigo-500 focus:outline-none uppercase">
+          </div>
+          <div>
+            <label for="fromSel" class="block text-sm font-bold mb-1">Qaysi sistemadan</label>
+            <select id="fromSel" class="w-full px-3 py-3 rounded-xl border-2 border-indigo-200 bg-white font-semibold">
+              <option value="2">Ikkilik (2)</option><option value="8">Sakkizlik (8)</option>
+              <option value="10" selected>O'nlik (10)</option><option value="16">O'n oltilik (16)</option>
+            </select>
+          </div>
+          <div>
+            <label for="toSel" class="block text-sm font-bold mb-1">Qaysi sistemaga</label>
+            <select id="toSel" class="w-full px-3 py-3 rounded-xl border-2 border-indigo-200 bg-white font-semibold">
+              <option value="2" selected>Ikkilik (2)</option><option value="8">Sakkizlik (8)</option>
+              <option value="10">O'nlik (10)</option><option value="16">O'n oltilik (16)</option>
+            </select>
+          </div>
+        </div>
+        <button id="convBtn" type="button" class="mt-4 w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-pink-500 text-white font-bold text-lg shadow-lg hover:scale-[1.01] active:scale-95 transition">🚀 O'tkazish</button>
+        <div id="err" class="hidden mt-4 text-rose-600 font-semibold bg-rose-50 rounded-xl p-3"></div>
+        <div id="result" class="mt-6 text-center"></div>
+        <div id="sharedSteps" class="mt-4 space-y-2"></div>
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+          <div class="rounded-2xl bg-indigo-50 p-4">
+            <p class="font-bold text-indigo-700 mb-2">1-usul: Qoldiq bilan bo'lish</p>
+            <div id="m1" class="space-y-2 text-sm md:text-base"></div>
+          </div>
+          <div class="rounded-2xl bg-pink-50 p-4">
+            <p class="font-bold text-pink-600 mb-2">2-usul: Darajalar yig'indisi</p>
+            <div id="m2" class="space-y-2 text-sm md:text-base"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- O'YIN 1: XATONI TOP -->
+    <section id="xato" class="py-8 scroll-mt-24">
+      <h2 class="text-2xl md:text-3xl font-black mb-2">🔍 O'yin 1: Xatoni top</h2>
+      <p class="text-slate-600 mb-6">Quyidagi o'tkazishda bitta xato qadam bor. Uni bossangiz, javobingiz tekshiriladi.</p>
+      <div id="xatoCard" class="card p-6 md:p-8 relative overflow-hidden">
+        <h3 id="xatoTitle" class="text-xl font-bold mb-4"></h3>
+        <div id="xatoList" class="space-y-3"></div>
+        <div id="xatoFb" class="mt-4 min-h-[28px] font-bold"></div>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <button id="xatoNext" type="button" class="hidden px-5 py-2.5 rounded-2xl bg-emerald-500 text-white font-bold shadow hover:bg-emerald-600 active:scale-95 transition">Keyingi misol ➜</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- O'YIN 2: DARAJALAR MINORASI -->
+    <section id="minora" class="py-8 scroll-mt-24">
+      <h2 class="text-2xl md:text-3xl font-black mb-2">🏗️ O'yin 2: Darajalar minorasi</h2>
+      <p class="text-slate-600 mb-6">Har bir qavatga nechta blok qo'yish kerakligini tanlang, yig'indi maqsadga teng bo'lsin!</p>
+      <div id="minoraCard" class="card p-6 md:p-8 relative overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <p class="text-lg">Maqsad: <b id="minoraTarget" class="text-2xl text-indigo-700"></b> <span id="minoraSys" class="text-slate-500"></span></p>
+          <p class="text-lg">Yig'indi: <b id="minoraSum" class="text-2xl">0</b></p>
+        </div>
+        <div id="minoraFloors" class="grid gap-3"></div>
+        <div id="minoraFb" class="mt-4 min-h-[28px] font-bold"></div>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <button id="minoraClear" type="button" class="px-5 py-2.5 rounded-2xl bg-white font-semibold shadow hover:bg-slate-50 active:scale-95 transition">Tozalash</button>
+          <button id="minoraNext" type="button" class="hidden px-5 py-2.5 rounded-2xl bg-emerald-500 text-white font-bold shadow hover:bg-emerald-600 active:scale-95 transition">Yangi minora ➜</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center text-sm text-slate-500 pb-8">Sanoq Sarguzashti · Har bir savol — yangi bilim! 💪</footer>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const DIG = "0123456789ABCDEF";
+  const dig = r => DIG[r];
+  const SYS = {
+    2:  { name: "Ikkilik",     re: /^[01]+$/,        hint: "faqat 0 va 1" },
+    8:  { name: "Sakkizlik",   re: /^[0-7]+$/,       hint: "0 dan 7 gacha" },
+    10: { name: "O'nlik",      re: /^\d+$/,          hint: "0 dan 9 gacha" },
+    16: { name: "O'n oltilik", re: /^[0-9A-F]+$/,    hint: "0–9 va A–F" }
+  };
+  const TITLES = ["Yangi sayohatchi", "Raqamlar do'sti", "Asos ustasi", "Sanoq jangchisi", "Kompyuter sehrgari"];
+
+  function rnd(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+  function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  /* ---------- Effektlar ---------- */
+  let actx = null;
+  function beep(freq, dur) {
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.frequency.value = freq;
+      o.connect(g); g.connect(actx.destination);
+      g.gain.setValueAtTime(0.15, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
+      o.start(); o.stop(actx.currentTime + dur);
+    } catch (e) {}
+  }
+  function confetti() {
+    const cols = ["#f472b6", "#818cf8", "#34d399", "#fbbf24", "#38bdf8"];
+    for (let i = 0; i < 60; i++) {
+      const d = document.createElement("div");
+      d.style.cssText = `position:fixed;top:-20px;left:${rnd(0, 100)}vw;width:10px;height:14px;` +
+        `background:${cols[rnd(0, 4)]};border-radius:3px;z-index:60;pointer-events:none;` +
+        `animation:fall ${rnd(15, 30) / 10}s linear ${rnd(0, 5) / 10}s forwards;`;
+      document.body.appendChild(d);
+      setTimeout(() => d.remove(), 3500);
+    }
+  }
+  function stars(el) {
+    for (let i = 0; i < 6; i++) {
+      const s = document.createElement("span");
+      s.className = "star";
+      s.textContent = ["⭐", "🌟", "✨"][rnd(0, 2)];
+      s.style.left = rnd(10, 85) + "%";
+      s.style.top = rnd(35, 70) + "%";
+      el.appendChild(s);
+      setTimeout(() => s.remove(), 1000);
+    }
+  }
+  function shake(el) { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+
+  /* ---------- XP ---------- */
+  let xp = parseInt(safeGet("sarg_xp") || "0", 10) || 0;
+  function renderXp() {
+    const lvl = Math.floor(xp / 60) + 1;
+    $("levelBadge").textContent = lvl;
+    $("xpBadge").textContent = xp + " XP";
+    $("xpBadge").title = TITLES[Math.min(lvl - 1, TITLES.length - 1)];
+  }
+  function addXp(g) { xp += g; safeSet("sarg_xp", String(xp)); renderXp(); }
+
+  /* ---------- Matematika ---------- */
+  // 1-usul: qoldiq bilan bo'lish qadamlari
+  function divSteps(n, t) {
+    const rows = []; let m = n;
+    while (m > 0) { rows.push({ m, q: Math.floor(m / t), r: m % t }); m = Math.floor(m / t); }
+    return rows;
+  }
+  // 2-usul: darajalar bo'yicha (eng katta darajadan boshlab)
+  function powSteps(n, t) {
+    let k = 0, p = 1;
+    while (p * t <= n) { p *= t; k++; }
+    const steps = []; let rem = n;
+    for (let e = k; e >= 0; e--) {
+      const pw = t ** e, d = Math.floor(rem / pw);
+      rem -= d * pw;
+      steps.push({ e, pw, d, rem });
+    }
+    return steps;
+  }
+  function expansion(raw, from) {
+    const arr = [...raw];
+    return arr.map((ch, i) => `${parseInt(ch, from)}·${from}<sup>${arr.length - 1 - i}</sup>`).join(" + ");
+  }
+  const block = (html, i) => `<div class="fade-in p-3 rounded-xl bg-white shadow-sm" style="animation-delay:${i * 0.1}s">${html}</div>`;
+
+  /* ---------- Nazariya: dinamik yo'nalish qo'llanmasi ---------- */
+  const GSYS = { 2: "Ikkilik", 4: "To'rtlik", 8: "Sakkizlik", 10: "O'nlik", 16: "O'n oltilik" };
+  const GBITS = { 2: 1, 4: 2, 8: 3, 16: 4 };
+  const EX_LIST = [11, 13, 22, 27, 45, 58];
+  const gState = { from: 10, to: 2, ex: 13, qSrc: "", qAns: "", answered: false, fbHtml: "" };
+
+  function powHtml(n, b, res) {
+    const st = powSteps(n, b);
+    const rows = st.map(x =>
+      `<div class="p-2 rounded-lg bg-white font-mono text-sm md:text-base">${b}<sup>${x.e}</sup> = ${x.pw}: <b class="text-pink-600">${dig(x.d)}</b> ta, qoldiq ${x.rem}</div>`
+    ).join("");
+    const parts = st.filter(x => x.d > 0).map(x => `${x.d}·${x.pw}`).join(" + ");
+    return rows + `<div class="p-2 rounded-lg bg-emerald-100 font-bold">Yig'indi: ${parts} = ${n} → <span class="font-mono text-indigo-700">${res}</span></div>`;
+  }
+  function toBin(s, a) {
+    return [...s].map(ch => parseInt(ch, a).toString(2).padStart(GBITS[a], "0")).join("");
+  }
+  function fromBin(bin, b) {
+    const k = GBITS[b];
+    const p = bin.padStart(Math.ceil(bin.length / k) * k, "0");
+    let out = "";
+    for (let i = 0; i < p.length; i += k) out += parseInt(p.slice(i, i + k), 2).toString(b).toUpperCase();
+    return out.replace(/^0+(?=.)/, "");
+  }
+  function hintFor(a, b) {
+    if (a === 10) return "sonni bo'lib, qoldiqlarni pastdan yuqoriga o'qing.";
+    if (b === 10) return "har bir raqamni asos darajasiga ko'paytirib, natijalarni qo'shing.";
+    return "avval o'nlikka, so'ng maqsad sistemaga o'ting.";
+  }
+
+  function newQuiz() {
+    const a = gState.from, b = gState.to;
+    const n = rnd(5, 63);
+    gState.qSrc = n.toString(a).toUpperCase();
+    gState.qAns = n.toString(b).toUpperCase();
+    gState.answered = false;
+    gState.fbHtml = "";
+  }
+
+  function renderQuiz() {
+    const box = $("quizBox");
+    if (!box) return;
+    const a = gState.from, b = gState.to, st = gState;
+    box.innerHTML = `
+      <p class="text-lg md:text-xl mb-4"><b class="font-mono">${st.qSrc}</b> <span class="text-slate-500">(${GSYS[a]})</span> sonini <b class="text-indigo-600">${GSYS[b]}</b> sistemaga o'tkazing</p>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input id="qIn" type="text" autocomplete="off" placeholder="Javobni yozing" ${st.answered ? "disabled" : ""}
+          class="flex-1 text-2xl font-mono font-bold px-4 py-3 rounded-2xl border-2 border-indigo-200 focus:border-indigo-500 focus:outline-none uppercase disabled:bg-slate-100">
+        ${st.answered
+          ? `<button type="button" data-act="next" class="px-6 py-3 rounded-2xl bg-emerald-500 text-white font-bold shadow hover:bg-emerald-600 active:scale-95 transition">Keyingi savol ➜</button>`
+          : `<button type="button" data-act="check" class="px-6 py-3 rounded-2xl bg-indigo-600 text-white font-bold shadow hover:bg-indigo-700 active:scale-95 transition">Tekshirish</button>`}
+      </div>
+      <div class="mt-4 min-h-[28px] font-bold">${st.fbHtml}</div>`;
+    if (!st.answered) $("qIn").focus();
+  }
+
+  function checkQuiz() {
+    const st = gState;
+    const inp = $("qIn");
+    if (!inp || st.answered) return;
+    const v = inp.value.trim().toUpperCase().replace(/\s/g, "").replace(/^0+(?=.)/, "");
+    if (!v) {
+      st.fbHtml = `<span class="text-amber-600">✍️ Avval javob yozing!</span>`;
+      renderQuiz();
+      return;
+    }
+    st.answered = true;
+    const box = $("quizBox");
+    if (v === st.qAns) {
+      addXp(5);
+      st.fbHtml = `<span class="text-emerald-600">🎉 To'g'ri! +5 XP</span>`;
+      renderQuiz();
+      stars(box);
+      beep(880, 0.15);
+    } else {
+      st.fbHtml = `<span class="text-rose-600">❌ Deyarli. To'g'ri javob: <b class="font-mono">${st.qAns}</b></span>
+        <div class="text-sm font-normal text-slate-600 mt-1">💡 Ko'rsatma: ${hintFor(gState.from, gState.to)}</div>`;
+      renderQuiz();
+      shake(box);
+      beep(220, 0.25);
+    }
+  }
+
+  function renderGuide() {
+    const a = gState.from, b = gState.to;
+    $("gRoute").textContent = `${a} → ${b}`;
+    $("gRouteName").textContent = `${GSYS[a]} → ${GSYS[b]}`;
+
+    if (a === b) {
+      $("guide").innerHTML = `
+        <div class="card p-6 text-center fade-in">
+          <div class="text-5xl mb-2">🤔</div>
+          <p class="text-lg font-bold">Bu ikki sistema bir xil!</p>
+          <p class="text-slate-600">Sonni o'tkazish shart emas, raqamlar o'zgarmaydi. Boshqa sistemani tanlang.</p>
+        </div>`;
+      return;
+    }
+
+    const n = gState.ex;
+    const s = n.toString(a).toUpperCase();
+    const res = n.toString(b).toUpperCase();
+
+    const rule = a === 10
+      ? `O'nlikdan ${GSYS[b]}ga o'tish uchun sonni ${b} ga ketma-ket bo'lamiz, qoldiqlarni esa pastdan yuqoriga qarab o'qiymiz.`
+      : b === 10
+        ? `${GSYS[a]}dan o'nlikka o'tish uchun har bir raqamni ${a} ning darajasiga ko'paytirib, natijalarni qo'shamiz.`
+        : `Bu ikki bosqichli yo'l: avval ${GSYS[a]}dan o'nlikka, so'ng o'nlikdan ${GSYS[b]}ga o'tamiz.`;
+
+    const why = a === 10
+      ? `Har bo'lishda sonning oxirgi raqami qoldiq bo'lib ajraladi. Bo'linma 0 bo'lganda barcha raqamlar chiqib bo'ladi, shuning uchun ularni teskari tartibda o'qiymiz.`
+      : b === 10
+        ? `Har bir xonaning o'z darajasi bor: o'ngdan chapga ${a}⁰, ${a}¹, ${a}²… Raqamni shu darajaga ko'paytirish uning haqiqiy qiymatini beradi.`
+        : `Ikkala sistema ham o'nlik orqali bog'lanadi. O'nlik sistema "ko'prik" vazifasini o'taydi.`;
+
+    const shared = a === 10 ? "" : `
+      <div class="p-3 rounded-xl bg-white shadow-sm fade-in">
+        <b>1-bosqich:</b> ${s} ni o'nlikka o'tkazamiz:
+        <div class="font-mono mt-1">${expansion(s, a)} = <b>${n}</b></div>
+      </div>`;
+
+    const m1 = b === 10
+      ? `<p class="text-slate-600">O'nlik sistemaga o'tkazishda bo'lish shart emas.</p>`
+      : divSteps(n, b).map(x =>
+          `<div class="p-2 rounded-lg bg-white font-mono text-sm md:text-base">${x.m} ÷ ${b} = ${x.q}, qoldiq <b class="text-pink-600">${dig(x.r)}</b></div>`
+        ).join("") + `<div class="p-2 rounded-lg bg-emerald-100 font-bold">Pastdan yuqoriga: <span class="font-mono text-indigo-700">${res}</span></div>`;
+
+    const m2 = b === 10
+      ? `<p class="text-slate-600">Son allaqachon o'nlik sistemada: <b>${n}</b>.</p>`
+      : powHtml(n, b, res);
+
+    const bits = (GBITS[a] && GBITS[b])
+      ? (() => {
+          const bin = toBin(s, a), grp = fromBin(bin, b);
+          return `
+          <div class="card p-6 fade-in">
+            <h3 class="text-xl font-bold mb-2">⚡ Tezkor yo'l</h3>
+            <p class="text-slate-600 mb-3">${GSYS[a]} va ${GSYS[b]} ham ikkilik bilan bog'liq (4, 8, 16 lar 2 ning darajalari). Har bir raqam ${GBITS[a]} ta bitga, ${GBITS[b]} tadan guruhlab o'tkaziladi.</p>
+            <div class="font-mono text-lg space-y-1">
+              <div>${s} (${GSYS[a]}) → <b>${bin}</b> (ikkilik)</div>
+              <div><b>${bin}</b> → <b class="text-indigo-700">${grp}</b> (${GSYS[b]})</div>
+            </div>
+          </div>`;
+        })()
+      : "";
+
+    $("guide").innerHTML = `
+      <div class="card p-6 fade-in">
+        <h3 class="text-xl font-bold mb-2">📌 Qoida</h3>
+        <p class="text-slate-700 leading-relaxed">${rule}</p>
+        <p class="mt-3 text-slate-600"><b>🧠 Nega shunday?</b> ${why}</p>
+      </div>
+
+      <div class="card p-6 fade-in">
+        <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+          <h3 class="text-xl font-bold">🧩 Qadam-baqadam misol</h3>
+          <button type="button" data-act="example" class="px-4 py-2 rounded-xl bg-white font-semibold shadow hover:bg-slate-50 active:scale-95 transition">🔄 Boshqa misol</button>
+        </div>
+        <p class="mb-4">Misol: <b class="font-mono text-2xl text-indigo-700">${s}</b> <span class="text-slate-500">(${GSYS[a]})</span> ni ${GSYS[b]} ga o'tkazamiz</p>
+        ${shared ? `<div class="mb-4">${shared}</div>` : ""}
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="rounded-2xl bg-indigo-50 p-4">
+            <p class="font-bold text-indigo-700 mb-2">1-usul: Qoldiq bilan bo'lish</p>
+            <div class="space-y-2">${m1}</div>
+          </div>
+          <div class="rounded-2xl bg-pink-50 p-4">
+            <p class="font-bold text-pink-600 mb-2">2-usul: Darajalar yig'indisi</p>
+            <div class="space-y-2">${m2}</div>
+          </div>
+        </div>
+        <p class="mt-4 text-center text-xl font-black">${s} (${GSYS[a]}) = <span class="font-mono text-indigo-700">${res}</span> (${GSYS[b]})</p>
+      </div>
+
+      ${bits}
+
+      <div class="card p-6 fade-in">
+        <h3 class="text-xl font-bold mb-4">🧪 Tezkor sinov</h3>
+        <div id="quizBox" class="relative"></div>
+      </div>`;
+
+    renderQuiz();
+  }
+
+  function onRoute() {
+    gState.from = +$("gFrom").value;
+    gState.to = +$("gTo").value;
+    newQuiz();
+    renderGuide();
+  }
+
+  function initGuide() {
+    $("gFrom").addEventListener("change", onRoute);
+    $("gTo").addEventListener("change", onRoute);
+    $("guide").addEventListener("click", e => {
+      const t = e.target.closest("[data-act]");
+      if (!t) return;
+      const act = t.dataset.act;
+      if (act === "example") {
+        const i = EX_LIST.indexOf(gState.ex);
+        gState.ex = EX_LIST[(i + 1) % EX_LIST.length];
+        renderGuide();
+      } else if (act === "check") {
+        checkQuiz();
+      } else if (act === "next") {
+        newQuiz();
+        renderQuiz();
+      }
+    });
+    $("guide").addEventListener("keydown", e => {
+      if (e.key === "Enter" && e.target.id === "qIn") checkQuiz();
+    });
+    onRoute();
+  }
+
+  /* ---------- O'tkazgich ---------- */
+  function showErr(msg) {
+    $("err").textContent = msg; $("err").classList.remove("hidden");
+    $("result").innerHTML = ""; $("sharedSteps").innerHTML = ""; $("m1").innerHTML = ""; $("m2").innerHTML = "";
+  }
+  function convert() {
+    $("err").classList.add("hidden");
+    const raw = $("inp").value.trim().replace(/\s/g, "").toUpperCase();
+    const from = +$("fromSel").value, to = +$("toSel").value;
+    if (!raw) return showErr("Iltimos, avval sonni kiriting.");
+    if (!SYS[from].re.test(raw)) return showErr(`"${raw}" ${SYS[from].name} sistemasida noto'g'ri. Faqat ${SYS[from].hint} bo'lishi kerak.`);
+    if (raw.length > 12) return showErr("Juda uzun son. 12 ta belgidan kam kiriting.");
+
+    const n = parseInt(raw, from);
+    const res = n.toString(to).toUpperCase();
+
+    $("result").innerHTML = `
+      <p class="text-sm text-slate-500">${SYS[from].name} → ${SYS[to].name}</p>
+      <p class="text-4xl font-black font-mono text-indigo-700 fade-in">${raw} <span class="text-slate-400">→</span> ${res}</p>`;
+
+    let shared = "";
+    if (from !== 10) {
+      shared = block(`<b>0-bosqich:</b> ${raw} ni o'nlikka o'tkazamiz:<br><span class="font-mono">${expansion(raw, from)} = <b>${n}</b></span>`, 0);
+    }
+    $("sharedSteps").innerHTML = shared;
+
+    if (from === to) {
+      const msg = block("Sonlar bir xil sistemada, o'tkazish shart emas.", 1);
+      $("m1").innerHTML = msg; $("m2").innerHTML = msg;
+      return;
+    }
+
+    // 1-usul
+    let h1 = "";
+    if (to === 10) {
+      h1 = block(`Maqsad o'nlik sistema bo'lgani uchun bo'lish shart emas. Natija: <b>${n}</b>`, 1);
+    } else {
+      const rows = divSteps(n, to);
+      if (rows.length === 0) h1 += block("0 ni hamma sistemada 0 deb yozamiz.", 1);
+      rows.forEach((x, i) => {
+        h1 += block(`<span class="font-mono">${x.m} ÷ ${to} = ${x.q}</span>, qoldiq <b class="text-pink-600 font-mono">${dig(x.r)}</b>`, i + 1);
+      });
+      h1 += block(`🎯 Qoldiqlarni <b>pastdan yuqoriga</b> o'qiymiz: <span class="font-mono text-xl font-black text-indigo-700">${res}</span>`, rows.length + 1);
+    }
+    $("m1").innerHTML = h1;
+
+    // 2-usul
+    let h2 = "";
+    if (to === 10) {
+      h2 = block(`Maqsad o'nlik sistema. Son ${n} bo'lib qoladi.`, 1);
+    } else {
+      const steps = powSteps(n, to);
+      steps.forEach((s, i) => {
+        const cnt = s.d > 0 ? `<b class="text-pink-600">${dig(s.d)}</b> ta` : `<b>0</b> ta`;
+        h2 += block(`${to}<sup>${s.e}</sup> = ${s.pw}: ${cnt}, qoldiq ${s.rem}`, i + 1);
+      });
+      const parts = steps.filter(s => s.d > 0).map(s => `${s.d}·${s.pw}`);
+      const sum = parts.length ? parts.join(" + ") : "0";
+      h2 += block(`Yig'indi: ${sum} = <b>${n}</b> → <span class="font-mono text-xl font-black text-indigo-700">${res}</span>`, steps.length + 1);
+    }
+    $("m2").innerHTML = h2;
+  }
+
+  /* ---------- O'YIN 1: Xatoni top ---------- */
+  let xr = {};
+  function newXato() {
+    const t = [2, 8, 16][rnd(0, 2)];
+    const n = rnd(5, t === 2 ? 63 : t === 8 ? 511 : 255);
+    const rows = divSteps(n, t);
+    const w = rnd(0, rows.length - 1);
+    const shown = rows.map((r, i) => ({ m: r.m, q: r.q, r: i === w ? (r.r + rnd(1, t - 1)) % t : r.r }));
+    xr = { t, n, w, shown, wrong: 0, done: false };
+    $("xatoTitle").innerHTML = `<b>${n}</b> sonini <b class="text-indigo-600">${SYS[t].name}</b> ga o'tkazish. Xato qadam qaysi?`;
+    $("xatoList").innerHTML = shown.map((x, i) => `
+      <button type="button" data-i="${i}" class="w-full text-left p-4 rounded-xl border-2 border-indigo-100 bg-white font-mono text-lg hover:border-indigo-400 hover:bg-indigo-50 transition active:scale-[.99]">
+        <span class="text-slate-400 mr-2">${i + 1}-qadam:</span>${x.m} ÷ ${t} = ${x.q}, qoldiq <b class="text-pink-600">${dig(x.r)}</b>
+      </button>`).join("");
+    $("xatoFb").textContent = "";
+    $("xatoNext").classList.add("hidden");
+  }
+  function pickXato(i) {
+    if (xr.done) return;
+    const btns = $("xatoList").querySelectorAll("button");
+    if (i === xr.w) {
+      xr.done = true;
+      btns[i].classList.add("border-emerald-500", "bg-emerald-50");
+      const x = xr.shown[i];
+      $("xatoFb").innerHTML = `<span class="text-emerald-600">🎉 Topdingiz! +15 XP</span><div class="text-sm text-slate-600 font-normal mt-1">Tekshirish: ${x.q} · ${xr.t} + ${x.r} = ${x.q * xr.t + x.r}, lekin bo'linadigan son ${x.m}. Demak, qoldiq ${divSteps(xr.n, xr.t)[i].r} bo'lishi kerak edi.</div>`;
+      addXp(15); confetti(); beep(880, 0.15); setTimeout(() => beep(1175, 0.2), 120);
+      $("xatoNext").classList.remove("hidden");
+    } else {
+      xr.wrong++;
+      btns[i].classList.add("border-rose-400", "bg-rose-50");
+      shake($("xatoCard"));
+      let msg = "❌ Bu qadamda xato yo'q shekilli. Yana tekshiring!";
+      if (xr.wrong >= 2) msg += `<div class="text-sm text-slate-600 font-normal mt-1">💡 Maslahat: har qadamda <b>q · asos + qoldiq = son</b> bo'lishi kerak. Qaysi qadam buni buzmoqda?</div>`;
+      $("xatoFb").innerHTML = `<span class="text-rose-600">${msg}</span>`;
+      beep(220, 0.25);
+    }
+  }
+
+  /* ---------- O'YIN 2: Darajalar minorasi ---------- */
+  let mr = {};
+  function newMinora() {
+    const t = [2, 8, 16][rnd(0, 2)];
+    const [lo, hi] = t === 2 ? [3, 31] : t === 8 ? [8, 511] : [16, 255];
+    const n = rnd(lo, hi);
+    const exps = powSteps(n, t).map(s => s.e);
+    mr = { t, n, exps, counts: exps.map(() => 0), done: false };
+    $("minoraNext").classList.add("hidden");
+    $("minoraFb").textContent = "";
+    renderMinora();
+  }
+  function renderMinora() {
+    const { t, n, exps, counts } = mr;
+    const sum = exps.reduce((acc, e, i) => acc + counts[i] * t ** e, 0);
+    $("minoraTarget").textContent = n;
+    $("minoraSys").textContent = `(${SYS[10].name} → ${SYS[t].name})`;
+    $("minoraSum").textContent = sum;
+    $("minoraFloors").innerHTML = exps.map((e, i) => `
+      <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-gradient-to-r from-indigo-50 to-pink-50">
+        <div class="font-mono font-bold text-lg">${t}<sup>${e}</sup> = ${t ** e}</div>
+        <div class="flex items-center gap-2">
+          <button type="button" data-f="${i}" data-d="-1" class="w-10 h-10 rounded-xl bg-white shadow font-black text-xl hover:bg-rose-50 active:scale-90 transition">−</button>
+          <span class="w-12 text-center font-black text-2xl font-mono text-indigo-700">${dig(counts[i])}</span>
+          <button type="button" data-f="${i}" data-d="1" class="w-10 h-10 rounded-xl bg-white shadow font-black text-xl hover:bg-emerald-50 active:scale-90 transition">+</button>
+        </div>
+        <div class="text-slate-500 text-sm">= ${counts[i] * t ** e}</div>
+      </div>`).join("");
+
+    if (!mr.done) {
+      if (sum === n) {
+        mr.done = true;
+        const digits = counts.map(dig).join("");
+        $("minoraFb").innerHTML = `<span class="text-emerald-600">🏆 Ajoyib! Minora tayyor. +20 XP</span><div class="text-sm text-slate-600 font-normal mt-1">Yozuv: <span class="font-mono text-lg">${digits}</span> (${SYS[t].name})</div>`;
+        addXp(20); confetti(); beep(988, 0.15); setTimeout(() => beep(1319, 0.25), 120);
+        $("minoraNext").classList.remove("hidden");
+        stars($("minoraCard"));
+      } else if (sum > n) {
+        $("minoraFb").innerHTML = `<span class="text-rose-600">⚠️ Yig'indi maqsaddan oshib ketdi. Ba'zi bloklarni kamaytiring!</span>`;
+      } else {
+        $("minoraFb").innerHTML = `<span class="text-slate-500">Yana ${n - sum} birlik kerak. Katta darajadan boshlang!</span>`;
+      }
+    }
+  }
+  function changeFloor(i, d) {
+    if (mr.done) return;
+    const max = mr.t - 1;
+    const v = mr.counts[i] + d;
+    if (v < 0 || v > max) { shake($("minoraCard")); return; }
+    mr.counts[i] = v;
+    renderMinora();
+  }
+
+  /* ---------- Hodisalar ---------- */
+  $("convBtn").addEventListener("click", convert);
+  $("inp").addEventListener("keydown", e => { if (e.key === "Enter") convert(); });
+  $("fromSel").addEventListener("change", convert);
+  $("toSel").addEventListener("change", convert);
+
+
+  $("xatoList").addEventListener("click", e => {
+    const b = e.target.closest("button[data-i]");
+    if (b) pickXato(+b.dataset.i);
+  });
+  $("xatoNext").addEventListener("click", newXato);
+
+  $("minoraFloors").addEventListener("click", e => {
+    const b = e.target.closest("button[data-f]");
+    if (b) changeFloor(+b.dataset.f, +b.dataset.d);
+  });
+  $("minoraClear").addEventListener("click", () => { if (!mr.done) { mr.counts = mr.exps.map(() => 0); renderMinora(); } });
+  $("minoraNext").addEventListener("click", newMinora);
+
+  /* ---------- Ishga tushirish ---------- */
+  renderXp();
+  initGuide();
+  convert();
+  newXato();
+  newMinora();
+})();
+</script>
+</body>
+</html>
